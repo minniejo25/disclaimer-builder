@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Utah Cottage Food Label Builder</title>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #2563eb;
+    --primary-light: #eff4ff;
+    --primary-dark: #1a4fbe;
+    --accent: #f59e0b;
+    --bg: #f8f9fb;
+    --card: #ffffff;
+    --text: #1e1e2e;
+    --text-light: #6b7280;
+    --border: #e2e5eb;
+    --radius: 12px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #1a4fbe 0%, #2563eb 40%, #3b82f6 100%);
+    color: white;
+    padding: 24px 32px;
+    text-align: center;
+  }
+  .header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+  .header p { font-size: 0.95rem; opacity: 0.9; max-width: 540px; margin: 0 auto; }
+
+  /* LAYOUT */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* FORM PANEL */
+  .form-panel {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 24px;
+  }
+  .form-panel h2 {
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+    color: var(--primary-dark);
+  }
+
+  /* Program selector */
+  .program-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .program-btn {
+    flex: 1;
+    padding: 12px 10px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  .program-btn strong { display: block; font-size: 0.95rem; margin-bottom: 2px; }
+  .program-btn.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+  .program-btn:hover { border-color: var(--primary); }
+
+  .program-note {
+    background: #f0f4ff;
+    border: 1px solid #c7d5f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: #3b5998;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  /* Form fields */
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.88rem;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .form-group .hint {
+    font-size: 0.78rem;
+    color: var(--text-light);
+    margin-bottom: 6px;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: white;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+
+  .form-section-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+    font-weight: 700;
+    margin: 20px 0 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .form-section-title:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+
+  .required-star { color: #c0392b; }
+
+  /* Allergen checkboxes */
+  .allergen-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .allergen-grid label {
+    font-weight: 400;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+  }
+  .allergen-grid input[type="checkbox"] { width: auto; accent-color: var(--primary); }
+
+  /* Disclaimer option radio cards */
+  .disclaimer-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .disclaimer-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  .disclaimer-option:hover { border-color: var(--primary); }
+  .disclaimer-option.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+  .disclaimer-option input[type="radio"] {
+    margin-top: 3px;
+    accent-color: var(--primary);
+    flex-shrink: 0;
+  }
+  .disclaimer-option-label { font-weight: 600; display: block; margin-bottom: 2px; }
+
+  /* Source links */
+  .source-links {
+    background: #f0f4ff;
+    border: 1px solid #c7d5f0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.8rem;
+    color: #3b5998;
+    line-height: 1.6;
+    margin-top: 18px;
+  }
+  .source-links strong { display: block; margin-bottom: 4px; font-size: 0.82rem; }
+  .source-links a {
+    color: var(--primary-dark);
+    text-decoration: underline;
+    word-break: break-all;
+  }
+  .source-links a:hover { color: var(--primary); }
+
+  /* PREVIEW PANEL */
+  .preview-panel {
+    position: sticky;
+    top: 24px;
+  }
+
+  .preview-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .preview-card h2 {
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+    color: var(--primary-dark);
+  }
+
+  /* Size picker */
+  .size-picker {
+    margin-bottom: 16px;
+    display: flex;
+    gap: 8px;
+  }
+  .size-btn {
+    flex: 1;
+    padding: 10px 10px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    text-align: center;
+  }
+  .size-btn .size-sub {
+    display: block;
+    font-weight: 400;
+    font-size: 0.72rem;
+    color: var(--text-light);
+    margin-top: 1px;
+  }
+  .size-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  .size-btn.active .size-sub { color: rgba(255,255,255,0.8); }
+  .size-btn:hover { border-color: var(--primary); }
+
+  /* Sticker surface */
+  .sticker-surface {
+    background: radial-gradient(ellipse at center, #f0f4fb 0%, #e4e9f2 100%);
+    border-radius: 12px;
+    padding: 28px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 160px;
+    position: relative;
+  }
+  .sticker-size-badge {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: rgba(37,99,235,0.75);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Compare view */
+  .compare-surface {
+    background: radial-gradient(ellipse at center, #f0f4fb 0%, #e4e9f2 100%);
+    border-radius: 12px;
+    padding: 24px 16px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .compare-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .compare-item .size-label-tag {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #1a4fbe;
+    background: rgba(255,255,255,0.7);
+    padding: 2px 10px;
+    border-radius: 8px;
+  }
+
+  /* Rectangle label */
+  .label-rect {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    padding: 5% 3%;
+    background:
+      radial-gradient(ellipse at 35% 25%, rgba(255,255,255,0.5) 0%, transparent 60%),
+      linear-gradient(175deg, #ffffff 0%, #fdfcfa 40%, #f8f6f2 100%);
+    border-radius: 4px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.08),
+      0 3px 6px rgba(0,0,0,0.06),
+      0 8px 20px rgba(0,0,0,0.04),
+      inset 0 0 0 1px rgba(0,0,0,0.06);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  .label-rect:hover { transform: scale(1.02); }
+  .label-rect * {
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Label inner elements */
+  .label-product-name {
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 1px;
+    letter-spacing: -0.3px;
+    color: #000;
+  }
+  .label-home-produced {
+    font-weight: 800;
+    margin-bottom: 0px;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .label-divider {
+    width: 100%;
+    height: 1px;
+    background: #000;
+    margin: 1.5px 0;
+    border: none;
+  }
+  .label-ingredients {
+    line-height: 1.25;
+    margin-bottom: 1px;
+    color: #000;
+    font-weight: 600;
+  }
+  .label-allergens {
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 1px;
+    color: #000;
+  }
+  .label-weight {
+    margin-bottom: 1px;
+    color: #000;
+    font-weight: 700;
+  }
+  .label-producer {
+    line-height: 1.2;
+    color: #000;
+    font-weight: 600;
+  }
+  .label-disclaimer-text {
+    font-style: italic;
+    line-height: 1.25;
+    color: #000;
+    font-weight: 600;
+    margin-bottom: 1px;
+  }
+  .label-p2-disclaimer {
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 2px;
+    color: #000;
+  }
+  .label-footer {
+    color: #000;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+  .label-text-muted { color: #000; font-style: italic; }
+
+  /* Tabs */
+  .preview-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border);
+  }
+  .preview-tab {
+    padding: 8px 20px;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    color: var(--text-light);
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+  }
+  .preview-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+  .preview-tab:hover { color: var(--primary); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Checklist */
+  .checklist {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+  }
+  .checklist h3 {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    color: var(--primary-dark);
+  }
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 0.84rem;
+  }
+  .checklist-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.3s;
+  }
+  .checklist-icon.complete {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+
+  /* ACTION BUTTONS */
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: #d99208; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: white;
+    color: var(--primary-dark);
+    border: 2px solid var(--primary);
+  }
+  .btn-secondary:hover { background: var(--primary-light); transform: translateY(-1px); }
+  .btn-secondary:active { transform: translateY(0); }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+  .btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .btn-subtext {
+    font-size: 0.75rem;
+    font-weight: 400;
+    opacity: 0.85;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* Overflow warning */
+  .overflow-warning {
+    display: none;
+    background: #fef3cd;
+    border: 1px solid #f0d56e;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #856404;
+    margin-top: 12px;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .overflow-warning.visible { display: block; }
+  .overflow-warning .upgrade-link {
+    color: var(--primary);
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 700;
+  }
+
+  /* PRICING TABLE */
+  .pricing-table-wrap {
+    background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-top: 4px;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.06);
+  }
+  .pricing-table-wrap h3 {
+    font-size: 0.95rem;
+    color: var(--primary-dark);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pricing-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.82rem;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .pricing-table th {
+    text-align: center;
+    font-weight: 700;
+    padding: 10px 10px;
+    background: var(--primary);
+    color: white;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+  }
+  .pricing-table th:first-child { border-radius: 0; }
+  .pricing-table th:last-child { border-radius: 0; }
+  .pricing-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    border-right: 1px solid #ebebeb;
+    transition: background 0.15s;
+  }
+  .pricing-table td:last-child {
+    border-right: none;
+  }
+  .pricing-table th {
+    border-right: 1px solid rgba(255,255,255,0.2);
+  }
+  .pricing-table th:last-child {
+    border-right: none;
+  }
+  .pricing-table tbody tr:hover {
+    background: #f5f8ff;
+  }
+  .pricing-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .pricing-table tbody tr:nth-child(even) {
+    background: #fafbfd;
+  }
+  .pricing-table tbody tr:nth-child(even):hover {
+    background: #f0f4ff;
+  }
+  .pricing-table td:first-child {
+    white-space: nowrap;
+    width: 40px;
+    text-align: center;
+  }
+  .pricing-table .best-value {
+    background: linear-gradient(90deg, #ecfdf5 0%, #d1fae5 100%) !important;
+    font-weight: 700;
+    position: relative;
+  }
+  .pricing-table .best-value td {
+    color: #166534;
+    background-color: transparent;
+    background-image: none;
+    border-bottom: none;
+    border-right-color: #a7f3d0;
+    -webkit-text-fill-color: #166534;
+  }
+  .pricing-table .best-value .savings,
+  .pricing-table .best-value .price-per-label {
+    color: #166534;
+    -webkit-text-fill-color: #166534;
+  }
+  .pricing-table .best-value td:first-child {
+    border-radius: 0 0 0 7px;
+  }
+  .pricing-table .best-value td:last-child {
+    border-radius: 0 0 7px 0;
+  }
+  .pricing-table .hobbyist-row {
+    background: linear-gradient(90deg, #eff4ff 0%, #dbe6ff 100%) !important;
+    font-weight: 700;
+  }
+  .pricing-table .hobbyist-row td {
+    color: #1a4fbe;
+    background: transparent;
+    border-right-color: #c0d4f5;
+  }
+  .pricing-table .hobbyist-row .savings {
+    color: #1a4fbe;
+  }
+  .pricing-table .pro-row {
+    background: linear-gradient(90deg, #fef9ee 0%, #fdefc8 100%) !important;
+    font-weight: 700;
+  }
+  .pricing-table .pro-row td {
+    color: #92400e;
+    background: transparent;
+    border-right-color: #fde8b0;
+  }
+  .pricing-table .pro-row .savings {
+    color: #92400e;
+  }
+  .pricing-table .savings {
+    color: #166534;
+    font-weight: 600;
+  }
+  .tier-badge {
+    display: inline-block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+  .tier-badge.best-value {
+    background: #166534;
+    color: white;
+  }
+  .tier-badge.hobbyist {
+    background: var(--primary);
+    color: white;
+  }
+  .tier-badge.pro {
+    background: var(--accent);
+    color: white;
+  }
+  .price-per-label {
+    color: var(--text-light);
+    font-size: 0.72rem;
+  }
+
+  /* FOOTER */
+  .site-footer {
+    background: linear-gradient(135deg, #1a1a2e 0%, #1e1e2e 40%, #2a2a3e 100%);
+    color: #b0b3bd;
+    text-align: center;
+    padding: 32px 24px 24px;
+    margin-top: 40px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .footer-brand {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 12px;
+  }
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .footer-links a {
+    color: #b0b3bd;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+    font-size: 0.85rem;
+  }
+  .footer-links a:hover {
+    color: white;
+  }
+  .footer-links svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .footer-divider {
+    width: 60px;
+    height: 1px;
+    background: #3a3c4a;
+    margin: 16px auto;
+  }
+  .footer-powered {
+    font-size: 0.78rem;
+    color: #6b6e7a;
+  }
+  .footer-powered a {
+    color: #8b8faa;
+    text-decoration: none;
+  }
+  .footer-powered a:hover {
+    color: white;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 800px) {
+    .container {
+      grid-template-columns: 1fr;
+    }
+    .preview-panel {
+      position: static;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Utah Cottage Food Label Builder</h1>
+  <p>Utah law requires specific info on your food labels — this tool makes sure you don't miss anything.</p>
+</div>
+
+<div class="container">
+  <!-- LEFT: FORM -->
+  <div class="form-panel">
+    <h2>Which type of label do you need?</h2>
+    <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:14px;">Your label needs a few specific things — we'll walk you through each one.</p>
+
+    <!-- Program Selector -->
+    <div class="program-selector">
+      <button class="program-btn active" onclick="setProgram(1)" id="prog1-btn">
+        <strong>Cottage Food</strong>
+        Registered with UDAF
+      </button>
+      <button class="program-btn" onclick="setProgram(2)" id="prog2-btn">
+        <strong>Homemade Food (HB181)</strong>
+        No registration needed
+      </button>
+    </div>
+
+    <div class="program-note" id="program-note">
+      Not sure? If you sell at farmers markets, you're almost certainly Cottage Food. If you registered with the Utah Dept. of Agriculture, that's you.
+    </div>
+
+    <!-- Program 1 Fields -->
+    <div id="program1-fields">
+      <div class="form-section-title">Product Details</div>
+
+      <div class="form-group">
+        <label>Product Name <span class="required-star">*</span></label>
+        <div class="hint">The common name of your product (e.g., "Chocolate Chip Cookies")</div>
+        <input type="text" id="productName" placeholder="Chocolate Chip Cookies" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>Ingredients <span class="required-star">*</span></label>
+        <div class="hint">List from most to least by weight, separated by commas</div>
+        <textarea id="ingredients" placeholder="All-purpose flour, butter, brown sugar, sugar, eggs, vanilla extract, baking soda, salt" oninput="updatePreview()"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Allergens Present</label>
+        <div class="hint">Check all that apply to your product</div>
+        <div class="allergen-grid">
+          <label><input type="checkbox" value="Milk" onchange="updatePreview()"> Milk</label>
+          <label><input type="checkbox" value="Eggs" onchange="updatePreview()"> Eggs</label>
+          <label><input type="checkbox" value="Wheat" onchange="updatePreview()"> Wheat</label>
+          <label><input type="checkbox" value="Peanuts" onchange="updatePreview()"> Peanuts</label>
+          <label><input type="checkbox" value="Tree Nuts" onchange="updatePreview()"> Tree Nuts</label>
+          <label><input type="checkbox" value="Soybeans" onchange="updatePreview()"> Soybeans</label>
+          <label><input type="checkbox" value="Fish" onchange="updatePreview()"> Fish</label>
+          <label><input type="checkbox" value="Shellfish" onchange="updatePreview()"> Shellfish</label>
+          <label><input type="checkbox" value="Sesame" onchange="updatePreview()"> Sesame</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Net Weight <span class="required-star">*</span></label>
+        <div class="hint">Use a kitchen scale — weigh the food only, not the bag or container</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="number" id="netWeight" placeholder="4" oninput="updatePreview()" style="width:80px;">
+          <select id="weightUnit" onchange="updatePreview()" style="width:auto;">
+            <option value="oz">oz</option>
+            <option value="g">g</option>
+            <option value="lb">lb</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-title">Your Information</div>
+
+      <div class="form-group">
+        <label>Business / Operation Name <span class="required-star">*</span></label>
+        <input type="text" id="bizName" placeholder="Jane's Baked Goods" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>Street Address <span class="required-star">*</span></label>
+        <input type="text" id="street" placeholder="123 Main St" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>City, State, ZIP <span class="required-star">*</span></label>
+        <input type="text" id="cityStateZip" placeholder="Provo, UT 84601" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number <span class="required-star">*</span></label>
+        <input type="tel" id="phone" placeholder="(801) 555-1234" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <!-- Program 2 Fields -->
+    <div id="program2-fields" style="display:none;">
+      <div class="form-section-title">Required Information</div>
+
+      <div class="form-group">
+        <label>Allergens Present <span class="required-star">*</span></label>
+        <div class="hint">Check all that apply — required by HB181</div>
+        <div class="allergen-grid" id="allergen-grid-2">
+          <label><input type="checkbox" value="Milk" onchange="updatePreview()"> Milk</label>
+          <label><input type="checkbox" value="Eggs" onchange="updatePreview()"> Eggs</label>
+          <label><input type="checkbox" value="Wheat" onchange="updatePreview()"> Wheat</label>
+          <label><input type="checkbox" value="Peanuts" onchange="updatePreview()"> Peanuts</label>
+          <label><input type="checkbox" value="Tree Nuts" onchange="updatePreview()"> Tree Nuts</label>
+          <label><input type="checkbox" value="Soybeans" onchange="updatePreview()"> Soybeans</label>
+          <label><input type="checkbox" value="Fish" onchange="updatePreview()"> Fish</label>
+          <label><input type="checkbox" value="Shellfish" onchange="updatePreview()"> Shellfish</label>
+          <label><input type="checkbox" value="Sesame" onchange="updatePreview()"> Sesame</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Business / Operation Name <span class="required-star">*</span></label>
+        <input type="text" id="bizName2" placeholder="Jane's Baked Goods" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>Street Address <span class="required-star">*</span></label>
+        <input type="text" id="street2" placeholder="456 Maple Ave" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>City, State, ZIP <span class="required-star">*</span></label>
+        <input type="text" id="cityStateZip2" placeholder="Provo, UT 84601" oninput="updatePreview()">
+      </div>
+
+      <div class="form-section-title">Optional</div>
+      <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:14px;">These aren't required by law, but many bakers include them to look more professional and build customer trust.</p>
+
+      <div class="form-group">
+        <label>Product Name</label>
+        <div class="hint">Not required by HB181, but helps customers identify your product</div>
+        <input type="text" id="productName2" placeholder="Banana Bread" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number</label>
+        <div class="hint">Not required, but builds customer trust</div>
+        <input type="tel" id="phone2" placeholder="(801) 555-1234" oninput="updatePreview()">
+      </div>
+
+      <div class="form-group">
+        <label>Ingredients</label>
+        <div class="hint">Not required for HB181, but many bakers include this</div>
+        <textarea id="ingredients2" placeholder="Butter, sugar, eggs, flour, salt, natural and artificial flavorings" oninput="updatePreview()"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>"May Contain" Warning</label>
+        <div class="hint">For allergens that might be present due to shared equipment or kitchen</div>
+        <input type="text" id="mayContain2" placeholder="Additional dairy" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <!-- Disclaimer Wording (both programs) -->
+    <div class="form-section-title">Home Kitchen Disclaimer</div>
+
+    <div class="form-group">
+      <label>Choose Your Disclaimer Wording <span class="required-star">*</span></label>
+      <div class="hint">All three meet Utah's requirements — pick the one that matches your vibe</div>
+    </div>
+    <div class="disclaimer-options" id="disclaimer-options">
+      <label class="disclaimer-option active" onclick="setDisclaimer(1)">
+        <input type="radio" name="disclaimer" value="1" checked>
+        <div>
+          <span class="disclaimer-option-label">Short & Simple</span>
+          Made in a home kitchen that is not subject to state or local health department inspection.
+        </div>
+      </label>
+      <label class="disclaimer-option" onclick="setDisclaimer(2)">
+        <input type="radio" name="disclaimer" value="2">
+        <div>
+          <span class="disclaimer-option-label">Friendly & Warm</span>
+          This product was lovingly made in a home kitchen. Home kitchens are not inspected by the state or local health department.
+        </div>
+      </label>
+      <label class="disclaimer-option" onclick="setDisclaimer(3)">
+        <input type="radio" name="disclaimer" value="3">
+        <div>
+          <span class="disclaimer-option-label">Direct & Formal</span>
+          This product was produced in a home kitchen that has not been inspected by the Utah Department of Health or any local health department.
+        </div>
+      </label>
+    </div>
+
+    <div class="program-note">
+      Note: Some farmers markets may have their own labeling requirements beyond state law. Check with your market organizer before your first event.
+    </div>
+
+    <!-- Source links -->
+    <div class="source-links">
+      <strong>Research the requirements yourself:</strong>
+      <span id="source-links-content">
+        <a href="https://ag.utah.gov/wp-content/uploads/Basic-Labeling-Guidelines-for-Home-Consumption-and-Homemade-Foods.pdf" target="_blank" style="display:inline-block;margin-bottom:6px;font-weight:700;font-size:0.88rem;">Official UDAF Labeling Guidelines (PDF)</a> — Quick-reference guide from the Utah Dept. of Agriculture<br>
+        Cottage Food: <a href="https://ag.utah.gov/regulatory-services/cottage-food-production/" target="_blank">ag.utah.gov/cottage-food-production</a><br>
+        Homemade Food (HB181): <a href="https://ag.utah.gov/regulatory-services/home-consumption-and-homemade-food-act/" target="_blank">ag.utah.gov/home-consumption-and-homemade-food-act</a><br>
+        Utah Admin Code R70-560-6 (Labeling): <a href="https://www.law.cornell.edu/regulations/utah/Utah-Admin-Code-R70-560-6" target="_blank">law.cornell.edu/regulations/utah</a><br>
+        USU Extension Food Biz: <a href="https://extension.usu.edu/foodbiz/production-resources/" target="_blank">extension.usu.edu/foodbiz</a>
+      </span>
+    </div>
+  </div>
+
+  <!-- RIGHT: PREVIEW -->
+  <div class="preview-panel">
+    <div class="preview-card">
+      <div class="preview-tabs">
+        <button class="preview-tab active" onclick="setTab('single')" id="tab-single">Preview</button>
+        <button class="preview-tab" onclick="setTab('compare')" id="tab-compare">Compare Sizes</button>
+      </div>
+
+      <!-- Single preview -->
+      <div class="tab-content active" id="single-view">
+        <div class="size-picker" style="flex-wrap:wrap;">
+          <button class="size-btn active" onclick="setSize('1x2')" id="size-btn-1x2">
+            1" x 2"
+            <span class="size-sub">Small landscape</span>
+          </button>
+          <button class="size-btn" onclick="setSize('1x2v')" id="size-btn-1x2v">
+            1" x 2"
+            <span class="size-sub">Small vertical</span>
+          </button>
+          <button class="size-btn" onclick="setSize('3x2')" id="size-btn-3x2">
+            3" x 2"
+            <span class="size-sub">Landscape</span>
+          </button>
+          <button class="size-btn" onclick="setSize('2x3')" id="size-btn-2x3">
+            2" x 3"
+            <span class="size-sub">Vertical</span>
+          </button>
+        </div>
+        <div class="sticker-surface">
+          <span class="sticker-size-badge" id="size-badge">1" x 2"</span>
+          <div id="main-preview-container"></div>
+        </div>
+        <div class="overflow-warning" id="overflow-warning">
+          Your content doesn't fit on this label size. Try a larger size: <span class="upgrade-link" onclick="setSize('3x2')">3" x 2"</span>, <span class="upgrade-link" onclick="setSize('2x3')">2" x 3"</span>, or <span class="upgrade-link" onclick="setSize('1x2v')">1" x 2" vertical</span>.
+        </div>
+      </div>
+
+      <!-- Compare view -->
+      <div class="tab-content" id="compare-view">
+        <div class="compare-surface">
+          <div class="compare-item">
+            <div id="compare-1x2"></div>
+            <span class="size-label-tag">1" x 2"</span>
+          </div>
+          <div class="compare-item">
+            <div id="compare-1x2v"></div>
+            <span class="size-label-tag">1" x 2" vert</span>
+          </div>
+          <div class="compare-item">
+            <div id="compare-3x2"></div>
+            <span class="size-label-tag">3" x 2"</span>
+          </div>
+          <div class="compare-item">
+            <div id="compare-2x3"></div>
+            <span class="size-label-tag">2" x 3"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completeness checklist -->
+    <div class="checklist" id="checklist"></div>
+
+    <!-- Action buttons -->
+    <div class="action-buttons">
+      <a class="btn btn-primary" id="order-btn" href="#" onclick="orderLabel(event)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span>
+          Order These Stickers
+          <span class="btn-subtext" id="order-pricing">100 labels starting at $10 — printed and shipped to you</span>
+        </span>
+      </a>
+      <div class="pricing-table-wrap" id="how-to-order" style="margin-bottom:10px;">
+        <h3>How to Order</h3>
+        <div style="font-size:0.85rem;line-height:1.7;color:var(--text);">
+          <strong>1.</strong> Fill in your label info above<br>
+          <strong>2.</strong> Click <strong>"Download as PNG"</strong> below to save your label<br>
+          <strong>3.</strong> Click <strong>"Order These Stickers"</strong> — it'll open our store in a new tab<br>
+          <strong>4.</strong> Pick your size and color, upload your PNG, and checkout!
+        </div>
+      </div>
+      <div class="pricing-table-wrap" id="pricing-chart">
+        <h3>Volume Pricing <span style="font-weight:400;font-size:0.78rem;color:var(--text-light);">— each pack = 100 labels</span></h3>
+        <table class="pricing-table">
+          <thead>
+            <tr><th>Packs</th><th>Labels</th><th>Price/Pack</th><th>Total</th><th>Savings</th></tr>
+          </thead>
+          <tbody id="pricing-tbody"></tbody>
+        </table>
+      </div>
+      <button class="btn btn-secondary" id="download-btn" onclick="downloadLabel('png')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Download as PNG</span>
+      </button>
+      <button class="btn btn-secondary" id="download-pdf-btn" onclick="downloadLabel('pdf')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Download as PDF<span class="btn-subtext">Print-ready format</span></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-powered" style="margin-bottom:10px;font-size:0.88rem;color:#d0d3dd;">Helping cottage food bakers look professional</div>
+  <div style="font-size:0.82rem;color:#b0b3bd;max-width:520px;margin:0 auto 14px;line-height:1.5;">This tool is for guidance only. Always verify labeling requirements with your local health department before selling your products.</div>
+  <div class="footer-divider"></div>
+  <div class="footer-brand">Simple Biz Labels</div>
+  <div class="footer-links">
+    <a href="https://simplebizlabels.com" target="_blank">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Website
+    </a>
+    <a href="https://www.facebook.com/profile.php?id=61580960445238" target="_blank">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      Facebook
+    </a>
+    <a href="https://www.instagram.com/simple_biz_labels/" target="_blank">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      Instagram
+    </a>
+    <a href="mailto:order@simplebizlabels.com">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Contact Us
+    </a>
+  </div>
+  <div class="footer-powered" style="margin-bottom:6px;">Based in Utah</div>
+  <div class="footer-powered" style="margin-bottom:12px;">Powered by <a href="https://simplebizlabels.com" target="_blank">Simple Biz Labels</a></div>
+  <div class="footer-powered" style="font-size:0.72rem;">&copy; 2026 Simple Biz Labels. All rights reserved.</div>
+</footer>
+
+<script>
+  // State
+  let currentProgram = 1;
+  let currentSize = '1x2';
+  let currentTab = 'single';
+  let currentDisclaimer = 1;
+  const PPI = 96;
+
+  const disclaimerTexts = {
+    1: 'Made in a home kitchen that is not subject to state or local health department inspection.',
+    2: 'This product was lovingly made in a home kitchen. Home kitchens are not inspected by the state or local health department.',
+    3: 'This product was produced in a home kitchen that has not been inspected by the Utah Department of Health or any local health department.',
+  };
+
+  const sizeDims = {
+    '1x2': { w: 2, h: 1 },
+    '1x2v': { w: 1, h: 2 },
+    '3x2': { w: 3, h: 2 },
+    '2x3': { w: 2, h: 3 },
+  };
+
+  // Program switcher
+  function setProgram(p) {
+    currentProgram = p;
+    document.getElementById('prog1-btn').classList.toggle('active', p === 1);
+    document.getElementById('prog2-btn').classList.toggle('active', p === 2);
+    document.getElementById('program1-fields').style.display = p === 1 ? 'block' : 'none';
+    document.getElementById('program2-fields').style.display = p === 2 ? 'block' : 'none';
+    document.getElementById('program-note').textContent = p === 1
+      ? "Not sure? If you sell at farmers markets, you're almost certainly Cottage Food. If you registered with the Utah Dept. of Agriculture, that's you."
+      : "Homemade Food (HB181) has simpler labeling rules but you can only sell direct to consumers. No registration needed.";
+    updatePreview();
+  }
+
+  // Size picker
+  function setSize(s) {
+    currentSize = s;
+    ['1x2','1x2v','3x2','2x3'].forEach(k => {
+      document.getElementById('size-btn-' + k).classList.toggle('active', s === k);
+    });
+    const labels = { '1x2': '1" x 2"', '1x2v': '1" x 2" vertical', '3x2': '3" x 2"', '2x3': '2" x 3"' };
+    document.getElementById('size-badge').textContent = labels[s];
+    updatePreview();
+    updateOrderPricing();
+  }
+
+  // Tab switcher
+  function setTab(tab) {
+    currentTab = tab;
+    document.getElementById('tab-single').classList.toggle('active', tab === 'single');
+    document.getElementById('tab-compare').classList.toggle('active', tab === 'compare');
+    document.getElementById('single-view').classList.toggle('active', tab === 'single');
+    document.getElementById('compare-view').classList.toggle('active', tab === 'compare');
+    updatePreview();
+  }
+
+  // Disclaimer picker
+  function setDisclaimer(n) {
+    currentDisclaimer = n;
+    document.querySelectorAll('.disclaimer-option').forEach((el, i) => {
+      el.classList.toggle('active', i === n - 1);
+    });
+    updatePreview();
+  }
+
+  // Gather form data
+  function getFormData() {
+    if (currentProgram === 1) {
+      const allergens = [];
+      document.querySelectorAll('#program1-fields .allergen-grid input[type=checkbox]:checked')
+        .forEach(cb => allergens.push(cb.value));
+      return {
+        program: 1,
+        productName: document.getElementById('productName').value.trim(),
+        ingredients: document.getElementById('ingredients').value.trim(),
+        allergens,
+        netWeight: document.getElementById('netWeight').value.trim(),
+        weightUnit: document.getElementById('weightUnit').value,
+        bizName: document.getElementById('bizName').value.trim(),
+        street: document.getElementById('street').value.trim(),
+        cityStateZip: document.getElementById('cityStateZip').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        disclaimer: disclaimerTexts[currentDisclaimer],
+      };
+    } else {
+      const allergens = [];
+      document.querySelectorAll('#allergen-grid-2 input[type=checkbox]:checked')
+        .forEach(cb => allergens.push(cb.value));
+      return {
+        program: 2,
+        productName: document.getElementById('productName2').value.trim(),
+        allergens,
+        bizName: document.getElementById('bizName2').value.trim(),
+        street: document.getElementById('street2').value.trim(),
+        cityStateZip: document.getElementById('cityStateZip2').value.trim(),
+        phone: document.getElementById('phone2').value.trim(),
+        ingredients: document.getElementById('ingredients2').value.trim(),
+        mayContain: document.getElementById('mayContain2').value.trim(),
+        disclaimer: disclaimerTexts[currentDisclaimer],
+      };
+    }
+  }
+
+  // Build rectangle label HTML
+  function buildLabelHTML(data, wPx, hPx, fontScale, sizeKey) {
+    const baseW = 2 * PPI;
+    const scale = wPx / baseW;
+    const minPx = data.program === 2 ? Math.round(5 * scale * fontScale) : Math.round(4 * scale * fontScale);
+    const fs = (px) => Math.max(minPx, Math.round(px * scale * fontScale)) + 'px';
+
+    if (data.program === 1) {
+      const name = data.productName || '<span class="label-text-muted">Product Name</span>';
+      const ing = data.ingredients
+        ? '<strong>Ingredients:</strong> ' + data.ingredients
+        : '<span class="label-text-muted">Ingredients: ...</span>';
+      const allergenLine = data.allergens.length
+        ? '<strong>Contains:</strong> ' + data.allergens.join(', ')
+        : '';
+      const weight = data.netWeight
+        ? 'Net Wt. ' + data.netWeight + ' ' + data.weightUnit
+        : '<span class="label-text-muted">Net Wt.</span>';
+      let producerLines = '';
+      if (data.bizName || data.street || data.cityStateZip || data.phone) {
+        const parts = [data.bizName, data.street, data.cityStateZip, data.phone].filter(Boolean);
+        producerLines = parts.join(' &bull; ');
+      } else {
+        producerLines = '<span class="label-text-muted">Your Name &amp; Address</span>';
+      }
+
+      return `
+        <div class="label-product-name" style="font-size:${fs(11)}">${name}</div>
+        <div class="label-home-produced" style="font-size:${fs(6.5)}">Home Produced</div>
+        <div class="label-producer" style="font-size:${fs(4.5)}">${producerLines}</div>
+        <div class="label-divider"></div>
+        <div class="label-ingredients" style="font-size:${fs(5)}">${ing}</div>
+        ${allergenLine ? `<div class="label-allergens" style="font-size:${fs(5)}">${allergenLine}</div>` : ''}
+        <div class="label-divider"></div>
+        <div class="label-weight" style="font-size:${fs(5)}">${weight}</div>
+        <div class="label-divider"></div>
+        <div class="label-disclaimer-text" style="font-size:${fs(4.5)}">${data.disclaimer}</div>
+      `;
+    } else {
+      const name = data.productName
+        ? `<div class="label-product-name" style="font-size:${fs(8)}">${data.productName}</div>`
+        : '';
+      const allergenLine = data.allergens.length
+        ? '<strong>Contains:</strong> ' + data.allergens.join(', ')
+        : '<span class="label-text-muted">Allergens: ...</span>';
+      const mayContainLine = data.mayContain
+        ? `<div class="label-allergens" style="font-size:${fs(5)}"><strong>May contain:</strong> ${data.mayContain}</div>`
+        : '';
+      const ingredientsLine = data.ingredients
+        ? `<div class="label-ingredients" style="font-size:${fs(5)}"><strong>Ingredients:</strong> ${data.ingredients}</div>`
+        : '';
+
+      // Producer block — name bold, address + phone below
+      let producerBlock = '';
+      if (data.bizName || data.street || data.cityStateZip || data.phone) {
+        const bizLine = data.bizName ? `<strong>${data.bizName}</strong>` : '';
+        const addrParts = [data.street, data.cityStateZip].filter(Boolean).join(', ');
+        const phoneLine = data.phone || '';
+        const lines = [bizLine, addrParts, phoneLine].filter(Boolean);
+        producerBlock = lines.join('<br>');
+      } else {
+        producerBlock = '<span class="label-text-muted">Your Name &amp; Address</span>';
+      }
+
+      return `
+        ${name}
+        <div class="label-producer" style="font-size:${fs(5)}">${producerBlock}</div>
+        <div class="label-divider"></div>
+        <div class="label-disclaimer-text" style="font-size:${fs(5)}">${data.disclaimer}</div>
+        ${ingredientsLine ? `<div class="label-divider"></div>${ingredientsLine}` : ''}
+        <div class="label-divider"></div>
+        <div class="label-allergens" style="font-size:${fs(5)}">${allergenLine}</div>
+        ${mayContainLine ? mayContainLine : ''}
+        <div class="label-divider"></div>
+        <div class="label-p2-disclaimer" style="font-size:${fs(7)};text-transform:uppercase;letter-spacing:0.5px;">NOT FOR RESALE</div>
+      `;
+    }
+  }
+
+  // Create a rectangle label element
+  function createRect(sizeKey, data, fontScale) {
+    const dims = sizeDims[sizeKey];
+    const wPx = dims.w * PPI;
+    const hPx = dims.h * PPI;
+    // Display scale — make them bigger on screen for readability
+    const displayScale = sizeKey === '1x2' ? 1.8 : sizeKey === '1x2v' ? 2.2 : sizeKey === '2x3' ? 1.4 : 1.3;
+    const dw = Math.round(wPx * displayScale);
+    const dh = Math.round(hPx * displayScale);
+
+    const rect = document.createElement('div');
+    rect.className = 'label-rect';
+    rect.style.width = dw + 'px';
+    rect.style.height = dh + 'px';
+    rect.innerHTML = buildLabelHTML(data, dw, dh, fontScale || 1, sizeKey);
+    if (sizeKey === '2x3' || sizeKey === '1x2v') {
+      rect.style.textAlign = 'center';
+      rect.style.justifyContent = 'flex-start';
+      rect.style.paddingTop = '8%';
+    }
+    return rect;
+  }
+
+  // Update all previews
+  function updatePreview() {
+    const data = getFormData();
+
+    // Single preview
+    const mainContainer = document.getElementById('main-preview-container');
+    mainContainer.innerHTML = '';
+    const mainRect = createRect(currentSize, data, 1);
+    mainContainer.appendChild(mainRect);
+
+    // Compare view
+    ['1x2', '1x2v', '3x2', '2x3'].forEach(sizeKey => {
+      const container = document.getElementById('compare-' + sizeKey);
+      container.innerHTML = '';
+      container.appendChild(createRect(sizeKey, data, 1));
+    });
+
+    // Check for overflow after render
+    requestAnimationFrame(() => {
+      const warning = document.getElementById('overflow-warning');
+      const overflowing = mainRect.scrollHeight > mainRect.clientHeight;
+      warning.classList.toggle('visible', overflowing);
+    });
+
+    // Checklist
+    updateChecklist(data);
+  }
+
+  // Update completion checklist
+  function updateChecklist(data) {
+    const el = document.getElementById('checklist');
+    let items = [];
+
+    if (data.program === 1) {
+      items = [
+        { label: 'Product Name', done: !!data.productName, required: true },
+        { label: '"Home Produced" (auto-added)', done: true, required: true },
+        { label: 'Ingredients List', done: !!data.ingredients, required: true },
+        { label: 'Allergen Disclosure', done: data.allergens.length > 0, required: true },
+        { label: 'Net Weight', done: !!data.netWeight, required: true },
+        { label: 'Business Name', done: !!data.bizName, required: true },
+        { label: 'Street Address', done: !!data.street, required: true },
+        { label: 'City, State, ZIP', done: !!data.cityStateZip, required: true },
+        { label: 'Phone Number', done: !!data.phone, required: true },
+        { label: 'Home Kitchen Disclaimer', done: true, required: true },
+      ];
+    } else {
+      items = [
+        { label: 'Allergen List', done: data.allergens.length > 0, required: true },
+        { label: 'Business Name', done: !!data.bizName, required: true },
+        { label: 'Street Address', done: !!data.street, required: true },
+        { label: 'City, State, ZIP', done: !!data.cityStateZip, required: true },
+        { label: '"NOT FOR RESALE" (auto-added)', done: true, required: true },
+        { label: 'Home Kitchen Disclaimer (auto-added)', done: true, required: true },
+        { label: 'Product Name', done: !!data.productName, required: false },
+        { label: 'Phone Number', done: !!data.phone, required: false },
+        { label: 'Ingredients', done: !!data.ingredients, required: false },
+        { label: '"May Contain" Warning', done: !!data.mayContain, required: false },
+      ];
+    }
+
+    const requiredItems = items.filter(i => i.required !== false);
+    const optionalItems = items.filter(i => i.required === false);
+    const requiredDone = requiredItems.filter(i => i.done).length;
+    const requiredTotal = requiredItems.length;
+    const allRequiredDone = requiredDone === requiredTotal;
+
+    const renderItems = (list) => list.map(item => `
+      <div class="checklist-item">
+        <div class="checklist-icon ${item.done ? 'complete' : ''}">
+          ${item.done ? '&#10003;' : ''}
+        </div>
+        <span>${item.label}</span>
+      </div>
+    `).join('');
+
+    const optionalSection = optionalItems.length > 0 ? `
+      <h3 style="font-size:0.85rem;margin-top:12px;margin-bottom:8px;color:var(--text-light);">Optional</h3>
+      ${renderItems(optionalItems)}
+    ` : '';
+
+    el.innerHTML = `
+      <h3>Required ${allRequiredDone ? '&#10003; Complete!' : `(${requiredDone}/${requiredTotal})`}</h3>
+      ${renderItems(requiredItems)}
+      ${optionalSection}
+    `;
+  }
+
+  // ---- SHOPIFY STORE URL ----
+  const SHOPIFY_URL = 'https://simplebizlabels.com/products/food-cottage-disclaimer-and-allergens-notice';
+
+  // Helper: get safe filename
+  function getSafeFilename(data) {
+    const productName = data.productName || 'label';
+    return productName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+  }
+
+  // Helper: create offscreen export element
+  function createExportRect(data, exportW, exportH, exportScale) {
+    const rect = document.createElement('div');
+    rect.className = 'label-rect';
+    rect.style.width = exportW + 'px';
+    rect.style.height = exportH + 'px';
+    rect.style.position = 'fixed';
+    rect.style.left = '-9999px';
+    rect.style.top = '0';
+    rect.style.background = '#ffffff';
+    rect.style.boxShadow = 'none';
+    rect.innerHTML = buildLabelHTML(data, exportW, exportH, 1, currentSize);
+    if (currentSize === '2x3' || currentSize === '1x2v') {
+      rect.style.textAlign = 'center';
+      rect.style.justifyContent = 'flex-start';
+      rect.style.paddingTop = '8%';
+    }
+    return rect;
+  }
+
+  // Download label in chosen format
+  function downloadLabel(format) {
+    const btnMap = { png: 'download-btn', svg: 'download-svg-btn', pdf: 'download-pdf-btn' };
+    const btn = document.getElementById(btnMap[format]);
+    const spanEl = btn.querySelector('span');
+    const originalHTML = spanEl.innerHTML;
+    spanEl.textContent = 'Generating...';
+    btn.disabled = true;
+
+    const data = getFormData();
+    const dims = sizeDims[currentSize];
+    const safeName = getSafeFilename(data);
+
+    if (format === 'svg') {
+      downloadSVG(data, dims, safeName, btn, spanEl, originalHTML);
+    } else if (format === 'pdf') {
+      downloadPDF(data, dims, safeName, btn, spanEl, originalHTML);
+    } else {
+      downloadPNG(data, dims, safeName, btn, spanEl, originalHTML);
+    }
+  }
+
+  // PNG export
+  function downloadPNG(data, dims, safeName, btn, spanEl, originalHTML) {
+    const exportScale = 3;
+    const exportW = dims.w * PPI * exportScale;
+    const exportH = dims.h * PPI * exportScale;
+    const rect = createExportRect(data, exportW, exportH, exportScale);
+    document.body.appendChild(rect);
+
+    html2canvas(rect, {
+      backgroundColor: '#ffffff',
+      scale: 1,
+      width: exportW,
+      height: exportH,
+      useCORS: true,
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = safeName + '_' + currentSize + '_label.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      document.body.removeChild(rect);
+      spanEl.innerHTML = originalHTML;
+      btn.disabled = false;
+    }).catch(err => {
+      console.error('Export failed:', err);
+      document.body.removeChild(rect);
+      spanEl.innerHTML = originalHTML;
+      btn.disabled = false;
+      alert('Something went wrong exporting your label. Please try again.');
+    });
+  }
+
+  // SVG export
+  function downloadSVG(data, dims, safeName, btn, spanEl, originalHTML) {
+    const wIn = dims.w;
+    const hIn = dims.h;
+    const wPx = wIn * PPI;
+    const hPx = hIn * PPI;
+    const isVertical = currentSize === '2x3' || currentSize === '1x2v';
+    const textAlign = isVertical ? 'center' : 'left';
+    const justifyContent = isVertical ? 'flex-start' : 'center';
+    const paddingTop = isVertical ? '8%' : '5%';
+
+    const labelHTML = buildLabelHTML(data, wPx, hPx, 1, currentSize);
+
+    const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${wIn}in" height="${hIn}in" viewBox="0 0 ${wPx} ${hPx}">
+  <foreignObject width="100%" height="100%">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="
+      width:${wPx}px;height:${hPx}px;
+      font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+      display:flex;flex-direction:column;justify-content:${justifyContent};
+      text-align:${textAlign};padding:${paddingTop} 5%;
+      background:linear-gradient(175deg,#ffffff 0%,#fdfcfa 40%,#f8f6f2 100%);
+      box-sizing:border-box;overflow:hidden;
+    ">
+      <style>
+        .label-product-name{font-weight:900;line-height:1.05;margin-bottom:1px;color:#000}
+        .label-home-produced{font-weight:800;margin-bottom:0;color:#000;text-transform:uppercase;letter-spacing:0.5px}
+        .label-divider{width:100%;height:1px;background:#000;margin:1.5px 0;border:none}
+        .label-ingredients{line-height:1.25;margin-bottom:1px;color:#000;font-weight:600}
+        .label-allergens{font-weight:800;line-height:1.25;margin-bottom:1px;color:#000}
+        .label-weight{margin-bottom:1px;color:#000;font-weight:700}
+        .label-producer{line-height:1.2;color:#000;font-weight:600}
+        .label-disclaimer-text{font-style:italic;line-height:1.25;color:#000;font-weight:600;margin-bottom:1px}
+        .label-p2-disclaimer{font-weight:800;line-height:1.25;margin-bottom:2px;color:#000}
+        .label-text-muted{color:#999;font-style:italic}
+      </style>
+      ${labelHTML}
+    </div>
+  </foreignObject>
+</svg>`;
+
+    const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+    const link = document.createElement('a');
+    link.download = safeName + '_' + currentSize + '_label.svg';
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    URL.revokeObjectURL(link.href);
+    spanEl.innerHTML = originalHTML;
+    btn.disabled = false;
+  }
+
+  // PDF export
+  function downloadPDF(data, dims, safeName, btn, spanEl, originalHTML) {
+    const exportScale = 3;
+    const exportW = dims.w * PPI * exportScale;
+    const exportH = dims.h * PPI * exportScale;
+    const rect = createExportRect(data, exportW, exportH, exportScale);
+    document.body.appendChild(rect);
+
+    html2canvas(rect, {
+      backgroundColor: '#ffffff',
+      scale: 1,
+      width: exportW,
+      height: exportH,
+      useCORS: true,
+    }).then(canvas => {
+      // Convert to JPEG for PDF embedding
+      const c2 = document.createElement('canvas');
+      c2.width = canvas.width;
+      c2.height = canvas.height;
+      const ctx2 = c2.getContext('2d');
+      ctx2.fillStyle = '#ffffff';
+      ctx2.fillRect(0, 0, c2.width, c2.height);
+      ctx2.drawImage(canvas, 0, 0);
+      const jpegURL = c2.toDataURL('image/jpeg', 0.95);
+      const jpegRaw = atob(jpegURL.split(',')[1]);
+      const jpegBytes = new Uint8Array(jpegRaw.length);
+      for (let i = 0; i < jpegRaw.length; i++) jpegBytes[i] = jpegRaw.charCodeAt(i);
+
+      // PDF units: 72 points per inch
+      const pdfW = dims.w * 72;
+      const pdfH = dims.h * 72;
+
+      // Build PDF objects
+      const offsets = [];
+      let out = '%PDF-1.4\n';
+
+      offsets.push(out.length);
+      out += '1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n';
+
+      offsets.push(out.length);
+      out += '2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n';
+
+      offsets.push(out.length);
+      out += `3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pdfW} ${pdfH}] /Contents 4 0 R /Resources << /XObject << /Img 5 0 R >> >> >>\nendobj\n`;
+
+      const stream = `q ${pdfW} 0 0 ${pdfH} 0 0 cm /Img Do Q`;
+      offsets.push(out.length);
+      out += `4 0 obj\n<< /Length ${stream.length} >>\nstream\n${stream}\nendstream\nendobj\n`;
+
+      offsets.push(out.length);
+      out += `5 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`;
+
+      const encoder = new TextEncoder();
+      const beforeBin = encoder.encode(out);
+      const afterStream = encoder.encode('\nendstream\nendobj\n');
+
+      const xrefOffset = beforeBin.length + jpegBytes.length + afterStream.length;
+      const xrefEntries = offsets.map(off => String(off).padStart(10, '0') + ' 00000 n \n');
+      const xrefStr = `xref\n0 ${offsets.length + 1}\n0000000000 65535 f \n${xrefEntries.join('')}trailer\n<< /Size ${offsets.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+      const xrefBytes = encoder.encode(xrefStr);
+
+      const totalLen = beforeBin.length + jpegBytes.length + afterStream.length + xrefBytes.length;
+      const pdf = new Uint8Array(totalLen);
+      pdf.set(beforeBin, 0);
+      pdf.set(jpegBytes, beforeBin.length);
+      pdf.set(afterStream, beforeBin.length + jpegBytes.length);
+      pdf.set(xrefBytes, beforeBin.length + jpegBytes.length + afterStream.length);
+
+      const blob = new Blob([pdf], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.download = safeName + '_' + currentSize + '_label.pdf';
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      URL.revokeObjectURL(link.href);
+      document.body.removeChild(rect);
+      spanEl.innerHTML = originalHTML;
+      btn.disabled = false;
+    }).catch(err => {
+      console.error('PDF export failed:', err);
+      document.body.removeChild(rect);
+      spanEl.innerHTML = originalHTML;
+      btn.disabled = false;
+      alert('Something went wrong exporting your label. Please try again.');
+    });
+  }
+
+  // Volume pricing tiers per size group
+  const volumePricing = {
+    small: [
+      { packs: 1, price: 10.00 },
+      { packs: 2, price: 9.00 },
+      { packs: 3, price: 8.50 },
+      { packs: 4, price: 8.00 },
+      { packs: 5, price: 7.50 },
+      { packs: 6, price: 7.00 },
+      { packs: 7, price: 6.50 },
+      { packs: 8, price: 6.00 },
+      { packs: 9, price: 5.50 },
+      { packs: 10, price: 5.00 },
+    ],
+    large: [
+      { packs: 1, price: 12.00 },
+      { packs: 2, price: 10.80 },
+      { packs: 3, price: 10.20 },
+      { packs: 4, price: 9.60 },
+      { packs: 5, price: 9.00 },
+      { packs: 6, price: 8.40 },
+      { packs: 7, price: 7.80 },
+      { packs: 8, price: 7.20 },
+      { packs: 9, price: 6.60 },
+      { packs: 10, price: 6.00 },
+    ],
+  };
+
+  function getPricingGroup() {
+    return (currentSize === '1x2' || currentSize === '1x2v') ? 'small' : 'large';
+  }
+
+  // Render pricing table
+  function updatePricingChart() {
+    const group = getPricingGroup();
+    const tiers = volumePricing[group];
+    const tbody = document.getElementById('pricing-tbody');
+    const basePrice = tiers[0].price;
+
+    tbody.innerHTML = tiers.map((t, i) => {
+      const total = (t.packs * t.price).toFixed(2);
+      const labels = t.packs * 100;
+      const fullPrice = t.packs * basePrice;
+      const saved = fullPrice - (t.packs * t.price);
+      const savePct = Math.round((saved / fullPrice) * 100);
+      const savingsText = saved > 0 ? `$${saved.toFixed(2)} <span class="price-per-label">(${savePct}% off)</span>` : '—';
+      const isBest = i === tiers.length - 1 && tiers.length > 1;
+      const isPro = t.packs === 5;
+      const isHobby = t.packs === 1;
+      const rowClass = isBest ? 'best-value' : isPro ? 'pro-row' : isHobby ? 'hobbyist-row' : '';
+      const perLabel = (t.price / 100).toFixed(2);
+      return `<tr class="${rowClass}">
+        <td>${t.packs}${
+          isBest ? '<br><span class="tier-badge best-value">Best Value</span><br><span class="tier-badge best-value" style="background:#0e7a3a;margin-top:3px;">Free Shipping</span>' :
+          isHobby ? '<br><span class="tier-badge hobbyist">Hobbyist</span>' :
+          isPro ? '<br><span class="tier-badge pro">Pro</span>' : ''
+        }</td>
+        <td>${labels.toLocaleString()}</td>
+        <td>$${t.price.toFixed(2)} <span class="price-per-label">($${perLabel}/ea)</span></td>
+        <td>$${total}</td>
+        <td class="savings">${savingsText}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Update order button pricing when size changes
+  function updateOrderPricing() {
+    const group = getPricingGroup();
+    const tiers = volumePricing[group];
+    const startPrice = '$' + tiers[0].price.toFixed(0);
+    const el = document.getElementById('order-pricing');
+    if (el) el.textContent = `100 labels starting at ${startPrice} — printed and shipped to you`;
+    updatePricingChart();
+  }
+
+  // Order stickers — redirect to Shopify in new tab
+  function orderLabel(e) {
+    e.preventDefault();
+    const data = getFormData();
+    const items = data.program === 1
+      ? [data.productName, data.ingredients, data.bizName, data.street, data.phone]
+      : [data.bizName, data.street, data.cityStateZip, data.allergens.length > 0];
+    const filled = items.filter(Boolean).length;
+    const threshold = data.program === 1 ? 3 : 2;
+    if (filled < threshold) {
+      alert("Fill in a bit more of your label first, then we'll get you set up with an order!");
+      return;
+    }
+    window.open(SHOPIFY_URL, '_blank');
+  }
+
+  // Init
+  updatePreview();
+  updatePricingChart();
+</script>
+</body>
+</html>
