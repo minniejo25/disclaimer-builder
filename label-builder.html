@@ -1001,14 +1001,6 @@
             1" x 2"
             <span class="size-sub">Small</span>
           </button>
-          <button class="size-btn" onclick="setSize('1x2a')" id="size-btn-1x2a">
-            2.25" x 1.25"
-            <span class="size-sub">Address</span>
-          </button>
-          <button class="size-btn" onclick="setSize('1x2av')" id="size-btn-1x2av">
-            1.25" x 2.25"
-            <span class="size-sub">Address vertical</span>
-          </button>
           <button class="size-btn" onclick="setSize('3x2')" id="size-btn-3x2">
             3" x 2"
             <span class="size-sub">Landscape</span>
@@ -1031,14 +1023,6 @@
           <div class="compare-item">
             <div id="compare-1x2"></div>
             <span class="size-label-tag">1" x 2"</span>
-          </div>
-          <div class="compare-item">
-            <div id="compare-1x2a"></div>
-            <span class="size-label-tag">2.25" x 1.25"</span>
-          </div>
-          <div class="compare-item">
-            <div id="compare-1x2av"></div>
-            <span class="size-label-tag">1.25" x 2.25"</span>
           </div>
           <div class="compare-item">
             <div id="compare-3x2"></div>
@@ -1145,8 +1129,6 @@
 
   const sizeDims = {
     '1x2': { w: 2, h: 1 },
-    '1x2a': { w: 2.25, h: 1.25 },
-    '1x2av': { w: 1.25, h: 2.25 },
     '3x2': { w: 3, h: 2 },
     '2x3': { w: 2, h: 3 },
   };
@@ -1167,10 +1149,10 @@
   // Size picker
   function setSize(s) {
     currentSize = s;
-    ['1x2','1x2a','1x2av','3x2','2x3'].forEach(k => {
+    ['1x2','3x2','2x3'].forEach(k => {
       document.getElementById('size-btn-' + k).classList.toggle('active', s === k);
     });
-    const labels = { '1x2': '1" x 2"', '1x2a': '2.25" x 1.25"', '1x2av': '1.25" x 2.25"', '3x2': '3" x 2"', '2x3': '2" x 3"' };
+    const labels = { '1x2': '1" x 2"', '3x2': '3" x 2"', '2x3': '2" x 3"' };
     document.getElementById('size-badge').textContent = labels[s];
     updatePreview();
     updateOrderPricing();
@@ -1249,7 +1231,7 @@
     const baseW = 2 * PPI;
     // For vertical labels, use a blend of width and height so narrow+tall labels
     // aren't penalized — the extra height gives room for larger text
-    const isVertical = sizeKey === '1x2av' || sizeKey === '2x3';
+    const isVertical = sizeKey === '2x3';
     const rawScale = wPx / baseW;
     // Vertical labels: blend width (dominant) with a small height boost — keeps text
     // proportional to the narrow width while allowing slightly larger sizing
@@ -1395,11 +1377,9 @@
     const wPx = dims.w * PPI;
     const hPx = dims.h * PPI;
     // Display scale — make them bigger on screen for readability
-    // All labels use the same scale so relative sizes are physically accurate.
-    // Scale chosen so the largest label (3x2) looks good on screen.
-    const uniformScale = 1.7;
-    const dw = Math.round(wPx * uniformScale);
-    const dh = Math.round(hPx * uniformScale);
+    const displayScale = sizeKey === '1x2' ? 1.8 : sizeKey === '2x3' ? 1.4 : 1.3;
+    const dw = Math.round(wPx * displayScale);
+    const dh = Math.round(hPx * displayScale);
 
     const rect = document.createElement('div');
     rect.className = 'label-rect';
@@ -1482,7 +1462,7 @@
 
     // Compare view
     const compareRects = [];
-    ['1x2', '1x2a', '1x2av', '3x2', '2x3'].forEach(sizeKey => {
+    ['1x2', '3x2', '2x3'].forEach(sizeKey => {
       const container = document.getElementById('compare-' + sizeKey);
       container.innerHTML = '';
       const r = createRect(sizeKey, data, 1);
@@ -1502,8 +1482,7 @@
           warning.innerHTML = 'Your content doesn\'t fit on this label. Try shortening your ingredients list or removing optional fields.';
         } else {
           warning.innerHTML = 'Your content doesn\'t fit on this label size. Try a larger size: '
-            + '<span class="upgrade-link" onclick="setSize(\'1x2a\')">2.25" x 1.25"</span>, '
-            + '<span class="upgrade-link" onclick="setSize(\'3x2\')">3" x 2"</span>, or '
+            + '<span class="upgrade-link" onclick="setSize(\'3x2\')">3" x 2"</span> or '
             + '<span class="upgrade-link" onclick="setSize(\'2x3\')">2" x 3"</span>.';
         }
       }
@@ -1651,7 +1630,7 @@
     const wPx = wIn * PPI;
     const hPx = hIn * PPI;
     const textAlign = currentAlignment;
-    const svgIsVertical = currentSize === '2x3' || currentSize === '1x2av';
+    const svgIsVertical = currentSize === '2x3';
     const justifyContent = svgIsVertical ? 'flex-start' : 'center';
     const paddingTop = svgIsVertical ? '8%' : '5%';
 
@@ -1821,7 +1800,7 @@
   };
 
   function getPricingGroup() {
-    return (currentSize === '1x2' || currentSize === '1x2a' || currentSize === '1x2av') ? 'small' : 'large';
+    return currentSize === '1x2' ? 'small' : 'large';
   }
 
   // Render pricing table
