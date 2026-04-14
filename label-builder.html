@@ -1308,8 +1308,8 @@
     } else {
       const hasProductName2 = !!data.productName;
       const allergenLine = data.allergens.length
-        ? '<strong>Allergens:</strong> ' + data.allergens.join(', ')
-        : '<span class="label-text-muted">Allergens: ...</span>';
+        ? '<strong>Contains:</strong> ' + data.allergens.join(', ')
+        : '<span class="label-text-muted">Contains: ...</span>';
       const ingredientsLine = data.ingredients
         ? `<div class="label-ingredients" style="font-size:${fs(6)}"><strong>Ingredients:</strong> ${data.ingredients}</div>`
         : '';
@@ -1395,9 +1395,11 @@
     const wPx = dims.w * PPI;
     const hPx = dims.h * PPI;
     // Display scale — make them bigger on screen for readability
-    const displayScale = sizeKey === '1x2' ? 1.8 : sizeKey === '1x2a' ? 1.4 : sizeKey === '1x2av' ? 1.6 : sizeKey === '2x3' ? 1.4 : 1.3;
-    const dw = Math.round(wPx * displayScale);
-    const dh = Math.round(hPx * displayScale);
+    // All labels use the same scale so relative sizes are physically accurate.
+    // Scale chosen so the largest label (3x2) looks good on screen.
+    const uniformScale = 1.7;
+    const dw = Math.round(wPx * uniformScale);
+    const dh = Math.round(hPx * uniformScale);
 
     const rect = document.createElement('div');
     rect.className = 'label-rect';
