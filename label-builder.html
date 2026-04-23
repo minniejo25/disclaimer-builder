@@ -146,7 +146,39 @@
   }
   .form-section-title:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
 
-  .required-star { color: #c0392b; }
+  .required-star { color: #c0392b; font-weight: 700; }
+
+  /* Required field highlighting */
+  .form-group.required input,
+  .form-group.required textarea,
+  .form-group.required select {
+    border: 2px solid #e2a03f;
+    background: #fffcf5;
+  }
+  .form-group.required input:focus,
+  .form-group.required textarea:focus,
+  .form-group.required select:focus {
+    border-color: var(--primary);
+    background: white;
+  }
+  .form-group.required label {
+    color: #1e1e2e;
+  }
+
+  /* Desktop notice banner */
+  .desktop-notice {
+    display: none;
+    background: linear-gradient(135deg, #fef3cd 0%, #fff8e1 100%);
+    border-bottom: 2px solid #f0d56e;
+    color: #856404;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+  @media (max-width: 900px) {
+    .desktop-notice { display: block; }
+  }
 
   /* Allergen checkboxes */
   .allergen-grid {
@@ -556,7 +588,7 @@
     font-weight: 700;
   }
 
-  /* PRICING TABLE */
+  /* How to order box */
   .pricing-table-wrap {
     background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
     border-radius: var(--radius);
@@ -572,138 +604,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-  }
-  .pricing-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    font-size: 0.82rem;
-    overflow: hidden;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
-  .pricing-table th {
-    text-align: center;
-    font-weight: 700;
-    padding: 10px 10px;
-    background: var(--primary);
-    color: white;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: none;
-  }
-  .pricing-table th:first-child { border-radius: 0; }
-  .pricing-table th:last-child { border-radius: 0; }
-  .pricing-table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid #f0f0f0;
-    border-right: 1px solid #ebebeb;
-    transition: background 0.15s;
-  }
-  .pricing-table td:last-child {
-    border-right: none;
-  }
-  .pricing-table th {
-    border-right: 1px solid rgba(255,255,255,0.2);
-  }
-  .pricing-table th:last-child {
-    border-right: none;
-  }
-  .pricing-table tbody tr:hover {
-    background: #f5f8ff;
-  }
-  .pricing-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-  .pricing-table tbody tr:nth-child(even) {
-    background: #fafbfd;
-  }
-  .pricing-table tbody tr:nth-child(even):hover {
-    background: #f0f4ff;
-  }
-  .pricing-table td:first-child {
-    white-space: nowrap;
-    width: 40px;
-    text-align: center;
-  }
-  .pricing-table .best-value {
-    background: linear-gradient(90deg, #ecfdf5 0%, #d1fae5 100%) !important;
-    font-weight: 700;
-    position: relative;
-  }
-  .pricing-table .best-value td {
-    color: #166534;
-    background-color: transparent;
-    background-image: none;
-    border-bottom: none;
-    border-right-color: #a7f3d0;
-    -webkit-text-fill-color: #166534;
-  }
-  .pricing-table .best-value .savings,
-  .pricing-table .best-value .price-per-label {
-    color: #166534;
-    -webkit-text-fill-color: #166534;
-  }
-  .pricing-table .best-value td:first-child {
-    border-radius: 0 0 0 7px;
-  }
-  .pricing-table .best-value td:last-child {
-    border-radius: 0 0 7px 0;
-  }
-  .pricing-table .hobbyist-row {
-    background: linear-gradient(90deg, #eff4ff 0%, #dbe6ff 100%) !important;
-    font-weight: 700;
-  }
-  .pricing-table .hobbyist-row td {
-    color: #1a4fbe;
-    background: transparent;
-    border-right-color: #c0d4f5;
-  }
-  .pricing-table .hobbyist-row .savings {
-    color: #1a4fbe;
-  }
-  .pricing-table .pro-row {
-    background: linear-gradient(90deg, #fef9ee 0%, #fdefc8 100%) !important;
-    font-weight: 700;
-  }
-  .pricing-table .pro-row td {
-    color: #92400e;
-    background: transparent;
-    border-right-color: #fde8b0;
-  }
-  .pricing-table .pro-row .savings {
-    color: #92400e;
-  }
-  .pricing-table .savings {
-    color: #166534;
-    font-weight: 600;
-  }
-  .tier-badge {
-    display: inline-block;
-    font-size: 0.62rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 2px;
-  }
-  .tier-badge.best-value {
-    background: #166534;
-    color: white;
-  }
-  .tier-badge.hobbyist {
-    background: var(--primary);
-    color: white;
-  }
-  .tier-badge.pro {
-    background: var(--accent);
-    color: white;
-  }
-  .price-per-label {
-    color: var(--text-light);
-    font-size: 0.72rem;
   }
 
   /* FOOTER */
@@ -777,6 +677,10 @@
 </head>
 <body>
 
+<div class="desktop-notice">
+  This tool works best on a desktop or laptop computer for the full label-building experience.
+</div>
+
 <div class="header">
   <h1>Utah Food Label Disclaimer Builder</h1>
   <p>Utah law requires specific info on your food labels — this tool makes sure you don't miss anything.</p>
@@ -808,13 +712,13 @@
     <div id="program1-fields">
       <div class="form-section-title">Product Details</div>
 
-      <div class="form-group">
+      <div class="form-group required">
         <label>Product Name <span class="required-star">*</span></label>
         <div class="hint">The common name of your product (e.g., "Chocolate Chip Cookies")</div>
         <input type="text" id="productName" placeholder="Chocolate Chip Cookies" oninput="updatePreview()">
       </div>
 
-      <div class="form-group">
+      <div class="form-group required">
         <label>Ingredients <span class="required-star">*</span></label>
         <div class="hint">List from most to least by weight, separated by commas</div>
         <textarea id="ingredients" placeholder="All-purpose flour, butter, brown sugar, sugar, eggs, vanilla extract, baking soda, salt" oninput="updatePreview()"></textarea>
@@ -840,7 +744,7 @@
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group required">
         <label>Net Weight <span class="required-star">*</span></label>
         <div class="hint">Use a kitchen scale — weigh the food only, not the bag or container</div>
         <div style="display:flex;gap:8px;align-items:center;">
@@ -855,22 +759,22 @@
 
       <div class="form-section-title">Your Information</div>
 
-      <div class="form-group">
+      <div class="form-group required">
         <label>Business / Operation Name <span class="required-star">*</span></label>
         <input type="text" id="bizName" placeholder="Jane's Baked Goods" oninput="updatePreview()">
       </div>
 
-      <div class="form-group">
+      <div class="form-group required">
         <label>Street Address <span class="required-star">*</span></label>
         <input type="text" id="street" placeholder="123 Main St" oninput="updatePreview()">
       </div>
 
-      <div class="form-group">
+      <div class="form-group required">
         <label>City, State, ZIP <span class="required-star">*</span></label>
         <input type="text" id="cityStateZip" placeholder="Provo, UT 84601" oninput="updatePreview()">
       </div>
 
-      <div class="form-group">
+      <div class="form-group required">
         <label>Phone Number <span class="required-star">*</span></label>
         <input type="tel" id="phone" placeholder="(801) 555-1234" oninput="updatePreview()">
       </div>
@@ -880,17 +784,17 @@
     <div id="program2-fields" style="display:none;">
       <div class="form-section-title">Required Information</div>
 
-      <div class="form-group">
+      <div class="form-group required">
         <label>Business / Operation Name <span class="required-star">*</span></label>
         <input type="text" id="bizName2" placeholder="Jane's Baked Goods" oninput="updatePreview()">
       </div>
 
-      <div class="form-group">
+      <div class="form-group required">
         <label>Street Address <span class="required-star">*</span></label>
         <input type="text" id="street2" placeholder="456 Maple Ave" oninput="updatePreview()">
       </div>
 
-      <div class="form-group">
+      <div class="form-group required">
         <label>City, State, ZIP <span class="required-star">*</span></label>
         <input type="text" id="cityStateZip2" placeholder="Provo, UT 84601" oninput="updatePreview()">
       </div>
@@ -1051,7 +955,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         <span>
           Order These Stickers
-          <span class="btn-subtext" id="order-pricing">100 labels starting at $10 — printed and shipped to you</span>
+          <span class="btn-subtext" id="order-pricing">Printed and shipped to you</span>
         </span>
       </a>
       <div class="pricing-table-wrap" id="how-to-order" style="margin-bottom:10px;">
@@ -1062,15 +966,6 @@
           <strong>3.</strong> Click <strong>"Order These Stickers"</strong> — it'll open our store in a new tab<br>
           <strong>4.</strong> Pick your size and color, upload your PNG, and checkout!
         </div>
-      </div>
-      <div class="pricing-table-wrap" id="pricing-chart">
-        <h3>Volume Pricing <span style="font-weight:400;font-size:0.78rem;color:var(--text-light);">— each pack = 100 labels</span></h3>
-        <table class="pricing-table">
-          <thead>
-            <tr><th>Packs</th><th>Labels</th><th>Price/Pack</th><th>Total</th><th>Savings</th></tr>
-          </thead>
-          <tbody id="pricing-tbody"></tbody>
-        </table>
       </div>
       <button class="btn btn-secondary" id="download-btn" onclick="downloadLabel('png')">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1155,7 +1050,6 @@
     const labels = { '1x2': '1" x 2"', '3x2': '3" x 2"', '2x3': '2" x 3"' };
     document.getElementById('size-badge').textContent = labels[s];
     updatePreview();
-    updateOrderPricing();
   }
 
   // Tab switcher
@@ -1377,7 +1271,7 @@
     const wPx = dims.w * PPI;
     const hPx = dims.h * PPI;
     // Display scale — make them bigger on screen for readability
-    const displayScale = sizeKey === '1x2' ? 1.8 : sizeKey === '2x3' ? 1.4 : 1.3;
+    const displayScale = sizeKey === '1x2' ? 1.2 : sizeKey === '2x3' ? 1.4 : 1.3;
     const dw = Math.round(wPx * displayScale);
     const dh = Math.round(hPx * displayScale);
 
@@ -1771,81 +1665,6 @@
     });
   }
 
-  // Volume pricing tiers per size group
-  const volumePricing = {
-    small: [
-      { packs: 1, price: 10.00 },
-      { packs: 2, price: 9.00 },
-      { packs: 3, price: 8.50 },
-      { packs: 4, price: 8.00 },
-      { packs: 5, price: 7.50 },
-      { packs: 6, price: 7.00 },
-      { packs: 7, price: 6.50 },
-      { packs: 8, price: 6.00 },
-      { packs: 9, price: 5.50 },
-      { packs: 10, price: 5.00 },
-    ],
-    large: [
-      { packs: 1, price: 12.00 },
-      { packs: 2, price: 10.80 },
-      { packs: 3, price: 10.20 },
-      { packs: 4, price: 9.60 },
-      { packs: 5, price: 9.00 },
-      { packs: 6, price: 8.40 },
-      { packs: 7, price: 7.80 },
-      { packs: 8, price: 7.20 },
-      { packs: 9, price: 6.60 },
-      { packs: 10, price: 6.00 },
-    ],
-  };
-
-  function getPricingGroup() {
-    return currentSize === '1x2' ? 'small' : 'large';
-  }
-
-  // Render pricing table
-  function updatePricingChart() {
-    const group = getPricingGroup();
-    const tiers = volumePricing[group];
-    const tbody = document.getElementById('pricing-tbody');
-    const basePrice = tiers[0].price;
-
-    tbody.innerHTML = tiers.map((t, i) => {
-      const total = (t.packs * t.price).toFixed(2);
-      const labels = t.packs * 100;
-      const fullPrice = t.packs * basePrice;
-      const saved = fullPrice - (t.packs * t.price);
-      const savePct = Math.round((saved / fullPrice) * 100);
-      const savingsText = saved > 0 ? `$${saved.toFixed(2)} <span class="price-per-label">(${savePct}% off)</span>` : '—';
-      const isBest = i === tiers.length - 1 && tiers.length > 1;
-      const isPro = t.packs === 5;
-      const isHobby = t.packs === 1;
-      const rowClass = isBest ? 'best-value' : isPro ? 'pro-row' : isHobby ? 'hobbyist-row' : '';
-      const perLabel = (t.price / 100).toFixed(2);
-      return `<tr class="${rowClass}">
-        <td>${t.packs}${
-          isBest ? '<br><span class="tier-badge best-value">Best Value</span><br><span class="tier-badge best-value" style="background:#0e7a3a;margin-top:3px;">Free Shipping</span>' :
-          isHobby ? '<br><span class="tier-badge hobbyist">Hobbyist</span>' :
-          isPro ? '<br><span class="tier-badge pro">Pro</span>' : ''
-        }</td>
-        <td>${labels.toLocaleString()}</td>
-        <td>$${t.price.toFixed(2)} <span class="price-per-label">($${perLabel}/ea)</span></td>
-        <td>$${total}</td>
-        <td class="savings">${savingsText}</td>
-      </tr>`;
-    }).join('');
-  }
-
-  // Update order button pricing when size changes
-  function updateOrderPricing() {
-    const group = getPricingGroup();
-    const tiers = volumePricing[group];
-    const startPrice = '$' + tiers[0].price.toFixed(0);
-    const el = document.getElementById('order-pricing');
-    if (el) el.textContent = `100 labels starting at ${startPrice} — printed and shipped to you`;
-    updatePricingChart();
-  }
-
   // Order stickers — redirect to Shopify in new tab
   function orderLabel(e) {
     e.preventDefault();
@@ -1864,7 +1683,6 @@
 
   // Init
   updatePreview();
-  updatePricingChart();
 </script>
 </body>
 </html>
